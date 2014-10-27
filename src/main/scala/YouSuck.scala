@@ -2,18 +2,32 @@ import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.StreamingContext._
 
+import org.json4s._
+import org.json4s.jackson.JsonMethods._
+
 object YouSuck {
 	def main(args: Array[String]) {
 		val conf = new SparkConf().setMaster("local").setAppName("Streaming")
-		val ssc = new StreamingContext(conf, Seconds(10))
+		val ssc = new StreamingContext(conf, Seconds(20))
+		ssc.checkpoint("file:/tmp/yousuck-checkpoint")
 		val lines = ssc.textFileStream("file:/home/vince/ratings")
 
-		val words = lines.flatMap(_.split(","))
-		val pairs = words.map(word => (word, 1))
-		val counts = pairs.reduceByKey(_ + _)
+		val ratings = lines.map(line => (parse(line) \\ "slide_title" -> parse(line) \\ "rating"))
+		val ratingsCount = ratings.map(rating => (rating, 1))
 
-		counts.print()
+		val ratingsTotals = ratingsCount.reduceByKey((a, b) => (a + b))
+
+		val runningCounts = ratingsTotals.updateStateByKey(updateRunningCounts)
+		runningCounts.print()
+		runningCounts.saveAsTextFiles("file:/home/vince/streaming-output")
+
 		ssc.start()
 		ssc.awaitTermination()
+	}
+
+	def updateRunningCounts(values: Seq[Int], counts: Option[Int]): Option[Int] = {
+		val currentCount = values.sum
+		val previousCount = counts.getOrElse(0)
+		Some(currentCount+previousCount)
 	}
 }
