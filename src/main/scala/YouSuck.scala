@@ -7,6 +7,7 @@ import org.json4s.jackson.JsonMethods._
 
 object YouSuck {
 	def main(args: Array[String]) {
+		val workDir = args(0)
 		val conf = new SparkConf().setMaster("local").setAppName("Streaming")
 		val ssc = new StreamingContext(conf, Seconds(20))
 		ssc.checkpoint("file:/tmp/yousuck-checkpoint")
