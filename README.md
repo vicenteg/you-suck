@@ -43,5 +43,5 @@ Quick Start
 7. Run the application as a local streaming application, setting the working directory as a command line option:
     ```
     cd ~/you-suck
-    /opt/spark-1.1.0-bin-mapr4/bin/spark-submit --class "YouSuck" --master 'local[2]' target/scala-2.10/you-suck-_2.10-1.0.r "file:/home/vince/ratings"
+    /opt/spark-1.1.0-bin-mapr4/bin/spark-submit --class "YouSuck" --master 'local[2]' target/scala-2.10/you-suck-_2.10-1.0.jar "file:/home/vince/ratings"
     ```
