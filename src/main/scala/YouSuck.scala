@@ -11,7 +11,7 @@ object YouSuck {
 		val conf = new SparkConf().setMaster("local").setAppName("Streaming")
 		val ssc = new StreamingContext(conf, Seconds(20))
 		ssc.checkpoint("file:/tmp/yousuck-checkpoint")
-		val lines = ssc.textFileStream("file:/home/vince/ratings")
+		val lines = ssc.textFileStream(workDir)
 
 		val ratings = lines.map(line => (parse(line) \\ "slide_title" -> parse(line) \\ "rating"))
 		val ratingsCount = ratings.map(rating => (rating, 1))
@@ -20,7 +20,7 @@ object YouSuck {
 
 		val runningCounts = ratingsTotals.updateStateByKey(updateRunningCounts)
 		runningCounts.print()
-		runningCounts.saveAsTextFiles("file:/home/vince/streaming-output")
+		runningCounts.saveAsTextFiles("file:/tmp/streaming-output")
 
 		ssc.start()
 		ssc.awaitTermination()
