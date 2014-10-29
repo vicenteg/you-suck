@@ -45,3 +45,20 @@ Quick Start
     cd ~/you-suck
     /opt/spark-1.1.0-bin-mapr4/bin/spark-submit --class "YouSuck" --master 'local[2]' target/scala-2.10/you-suck-_2.10-1.0.jar "file:/home/vince/ratings"
     ```
+
+
+Testing
+======
+
+Use log-synth (https://github.com/tdunning/log-synth) to generate JSON records to test with. The schema file included in `test/preso-ratings.schema` can be used as-is.
+
+Assuming you install log-synth in ~/, and that you are dropping the ratings into `/mapr/<clustername>/preso-ratings`:
+
+```
+    while :;
+    do 
+        ~/log-synth/synth -count $((RANDOM % 10)) -schema ~/you-suck/test/preso-ratings.schema -format json |\
+	     egrep "^{" > /mapr/vagrant/preso-ratings/ratings-`date +%s`.json 
+        sleep $((RANDOM % 30))
+    done
+```

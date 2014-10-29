@@ -1,0 +1,7 @@
+[
+{ "name": "name", "class":"name", "type":"first" },
+{ "name": "timestamp", "class":"date", "format":"yyyy-MM-dd HH:mm:ss", "start":"2014-11-03 18:30:00", "end":"2014-11-03 19:00:00" },
+{ "name": "slide_title", "class": "string", "dist": { "slide1": 0.25, "slide2": 0.25, "slide3": 0.25, "slide4": 0.25 } },
+{ "name": "rating", "class": "string", "dist":{ "sweet!": 0.33, "meh.": 0.28, "yousuck!": 0.22 } }
+]
+
